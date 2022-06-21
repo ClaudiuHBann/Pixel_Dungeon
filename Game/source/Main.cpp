@@ -5,6 +5,9 @@
 
 #include "Utility/Random.hpp"
 
+#include "Map.hpp"
+#include "Minimap.hpp"
+
 
 
 #define WINDOW_WIDTH_START (405) // Pixels
@@ -13,18 +16,11 @@
 
 #define RENDERER_FLAGS (SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)
 
-#define MAP_WIDTH 1000 // Tiles
-#define MAP_HEIGHT 1000 // Tiles
-
 #define ZOOM_MIN 5
 #define ZOOM_MAX 145
 
-#define MINIMAP_RADIUS 5 // Tiles
-#define MINIMAP_WIDTH 100 // Pixels
-#define MINIMAP_HEIGHT 100 // Pixels
 
-
-
+// Allocates space for 'room' and creates a random sized square
 void GenerateRoomSquare(std::vector<std::vector<uint8_t>>& room, const uint8_t maxSquareSize = 11) {
 	Random random;
 	const uint8_t squareSide = random.GetUInt32(3, 11);
@@ -37,10 +33,11 @@ void GenerateRoomSquare(std::vector<std::vector<uint8_t>>& room, const uint8_t m
 	}
 }
 
-void DrawRoomOnMap(std::vector<std::vector<uint16_t>>& map, std::vector<std::vector<uint8_t>>& room, const SDL_Point& offset = { 0, 0 }) {
+// Draws a 'room' on the 'mapLow' the the specified 'offset'
+void DrawRoomOnMap(std::vector<std::vector<uint16_t>>& mapLow, std::vector<std::vector<uint8_t>>& room, const SDL_Point& offset = { 0, 0 }) {
 	for(size_t height = 0; height < room.size(); height++) {
 		for(size_t width = 0; width < room[height].size(); width++) {
-			map[offset.x + height][offset.y + width] = room[height][width];
+			mapLow[offset.x + height][offset.y + width] = room[height][width];
 		}
 	}
 }
@@ -48,51 +45,64 @@ void DrawRoomOnMap(std::vector<std::vector<uint16_t>>& map, std::vector<std::vec
 
 
 int main(int argc, char** argv) {
+	// Window
 	Window window(
 		"Pixel Dungeon",
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		WINDOW_WIDTH_START, WINDOW_HEIGHT_START,
 		WINDOW_FLAGS, RENDERER_FLAGS
 	);
+	SDL_Point windowSize { WINDOW_WIDTH_START, WINDOW_HEIGHT_START };
 
 
 
+	// Create the path to the assets folder
 	std::string pathBase(SDL_GetBasePath());
 	pathBase += "assets\\";
 
-	Texture texture;
+
+
+	// Wall texture
 	float textureWallZoom = 1.f;
 	SDL_Point textureWallSize { 0, 0 };
-	auto textureWall = texture.Load(window.GetRenderer(), pathBase + "wall.jpg");
 
+	Texture texture;
+	auto textureWall = texture.Load(window.GetRenderer(), pathBase + "wall.jpg");
 	SDL_QueryTexture(textureWall, nullptr, nullptr, &textureWallSize.x, &textureWallSize.y);
 
-	SDL_Point offsetMap { 0, 0 };
 
+
+	// Map
+	Map map;
+	SDL_Point offsetMap { 0, 0 };
+	std::vector<std::vector<uint16_t>> mapLow(MAP_HEIGHT, std::vector<uint16_t>(MAP_WIDTH, 0));
+
+
+
+	// Minimap
+	Minimap minimap;
+
+
+
+	// Mouse
 	bool isMouseButtonDown = false;
 	SDL_Point mousePosOnButtonDown { 0, 0 };
 	SDL_Point mousePosDiff { 0, 0 };
 
-	Random random;
-	std::vector<std::vector<uint16_t>> map(MAP_HEIGHT, std::vector<uint16_t>(MAP_WIDTH, 0));
-	/////////////////////////////////////////////////////////////////////
-	// Generate rooms
-	const uint8_t roomsCount = 5;
+
+
+	// Create some rooms and draw them on the mapLow
+	const uint8_t roomsCount = 10;
 	std::vector<std::vector<std::vector<uint8_t>>> rooms(roomsCount, std::vector<std::vector<uint8_t>>());
 	for(size_t i = 0; i < roomsCount; i++) {
 		GenerateRoomSquare(rooms[i]);
 	}
 
-	// Draw the rooms to the map
 	uint16_t index = 0;
 	for(size_t i = 0; i < roomsCount; i++) {
-		DrawRoomOnMap(map, rooms[0], { index, 0 });
+		DrawRoomOnMap(mapLow, rooms[i], { index, 0 });
 		index += (uint16_t)rooms[i].size() + 1;
 	}
-	/////////////////////////////////////////////////////////////////////
-
-	SDL_Point windowSize { WINDOW_WIDTH_START, WINDOW_HEIGHT_START };
-	SDL_Point playerPos { 5, 5 };
 
 
 
@@ -106,6 +116,7 @@ int main(int argc, char** argv) {
 					isRunning = false;
 
 					break;
+
 				case SDL_WINDOWEVENT:
 					switch(event.window.event) {
 						case SDL_WINDOWEVENT_RESIZED:
@@ -114,11 +125,13 @@ int main(int argc, char** argv) {
 					}
 
 					break;
+
 				case SDL_MOUSEBUTTONDOWN:
 					isMouseButtonDown = true;
 					SDL_GetMouseState(&mousePosOnButtonDown.x, &mousePosOnButtonDown.y);
 
 					break;
+
 				case SDL_MOUSEMOTION:
 					if(isMouseButtonDown) {
 						SDL_Point mousePosCurrent { 0, 0 };
@@ -129,6 +142,7 @@ int main(int argc, char** argv) {
 					}
 
 					break;
+
 				case SDL_MOUSEBUTTONUP:
 					isMouseButtonDown = false;
 
@@ -150,49 +164,18 @@ int main(int argc, char** argv) {
 			}
 		}
 
+		// Clear the renderer and set the drawing color to white
 		SDL_RenderClear(window.GetRenderer());
 		SDL_SetRenderDrawColor(window.GetRenderer(), 255, 255, 255, SDL_ALPHA_OPAQUE);
 
-		//Draw map
-		for(size_t height = 0; height < MAP_HEIGHT; height++) {
-			for(size_t width = 0; width < MAP_WIDTH; width++) {
-				if(map[height][width]) {
-					texture.Render(
-						window.GetRenderer(),
-						textureWall,
-						{ (int)(width * textureWallSize.x * textureWallZoom) + offsetMap.x + mousePosDiff.x,
-						(int)(height * textureWallSize.y * textureWallZoom) + offsetMap.y + mousePosDiff.y },
-						{ textureWallZoom, textureWallZoom }
-					);
-				}
-			}
-		}
+		// Draw the map and minimap
+		map.Draw(window.GetRenderer(), mapLow, textureWall, textureWallSize, textureWallZoom, offsetMap, mousePosDiff);
+		minimap.Draw(window.GetRenderer(), mapLow, textureWall, textureWallSize, windowSize);
 
-		//Draw minimap
-		SDL_Point tileSize { MINIMAP_WIDTH / (MINIMAP_RADIUS * 2 + 1), MINIMAP_HEIGHT / (MINIMAP_RADIUS * 2 + 1) };
-		SDL_FPoint textureWallSizeDiff { textureWallSize.x / (MINIMAP_RADIUS * 2 + 1) / 20.f, textureWallSize.y / (MINIMAP_RADIUS * 2 + 1) / 20.f };
-		for(size_t height = 0; height <= MINIMAP_RADIUS * 2; height++) {
-			for(size_t width = 0; width <= MINIMAP_RADIUS * 2; width++) {
-				if(map[height][width]) {
-					texture.Render(
-						window.GetRenderer(),
-						textureWall,
-						{ windowSize.x - MINIMAP_WIDTH + (int)width * tileSize.x,
-						windowSize.y - MINIMAP_HEIGHT + (int)height * tileSize.y },
-						{ textureWallSizeDiff.x, textureWallSizeDiff.y }
-					);
-				}
-			}
-		}
-
+		// Present the renderer and set the drawing color to black
 		SDL_RenderPresent(window.GetRenderer());
 		SDL_SetRenderDrawColor(window.GetRenderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
 	}
-
-
-
-	texture.Remove(textureWall);
-	IMG_Quit();
 
 	return EXIT_SUCCESS;
 }

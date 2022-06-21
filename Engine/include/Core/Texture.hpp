@@ -15,7 +15,7 @@ public:
 	Texture();
 	~Texture();
 
-	inline void Render(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Point& position, const SDL_FPoint& size = { 1.f, 1.f }, const SDL_Rect& textureRect = { -1, -1, -1, -1 }) {
+	static inline void Render(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Point& position, const SDL_FPoint& size = { 1.f, 1.f }, const SDL_Rect& textureRect = { -1, -1, -1, -1 }) {
 		CHECK_IF_IS_INITIALIZED_AND_RETURN(m_isInitialized, "SDL_image");
 		CHECK_AND_RETURN(renderer);
 		CHECK_AND_RETURN(texture);
