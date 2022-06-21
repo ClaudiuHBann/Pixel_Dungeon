@@ -1,6 +1,0 @@
-﻿  Text.cpp
-  Texture.cpp
-  Window.cpp
-  Miscellaneous.cpp
-C:\Users\Claudiu HBann\Desktop\C++ Projects\Pixel Dungeon\Engine\include\Utility\Miscellaneous.hpp(109,3): error C3861: 'SDL_SetError': identifier not found
-  Random.cpp

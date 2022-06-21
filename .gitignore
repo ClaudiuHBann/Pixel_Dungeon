@@ -1,0 +1,9 @@
+Engine/Debug/
+Engine/Release/
+Engine/x64/
+Engine/x86/
+
+Game/Debug/
+Game/Release/
+Game/x64/
+Game/x86/
