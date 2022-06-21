@@ -182,5 +182,5 @@ int main(int argc, char** argv) {
 
 /*
 	TO DO:
-		- the zoom should be centered on the player
+		- the zoom should be centered on the player  
 */
