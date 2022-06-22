@@ -33,6 +33,9 @@
     <ClInclude Include="include\Core\Mixer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Networking\Client.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Core\Text.cpp">
@@ -51,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Core\Mixer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Networking\Client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

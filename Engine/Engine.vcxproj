@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\Networking\Client.hpp" />
     <ClInclude Include="include\Core\Text.hpp" />
     <ClInclude Include="include\Core\Texture.hpp" />
     <ClInclude Include="include\Core\Window.hpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="include\Core\Mixer.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\Networking\Client.cpp" />
     <ClCompile Include="source\Core\Mixer.cpp" />
     <ClCompile Include="source\Core\Text.cpp" />
     <ClCompile Include="source\Core\Texture.cpp" />

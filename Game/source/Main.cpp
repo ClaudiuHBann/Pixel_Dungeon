@@ -3,6 +3,8 @@
 #include "Core/Window.hpp"
 #include "Core/Texture.hpp"
 
+#include "Networking/Client.hpp"
+
 #include "Utility/Random.hpp"
 
 #include "Map.hpp"
@@ -45,6 +47,11 @@ void DrawRoomOnMap(std::vector<std::vector<uint16_t>>& mapLow, std::vector<std::
 
 
 int main(int argc, char** argv) {
+	// Asio Test
+	Client client;
+
+
+
 	// Window
 	Window window(
 		"Pixel Dungeon",

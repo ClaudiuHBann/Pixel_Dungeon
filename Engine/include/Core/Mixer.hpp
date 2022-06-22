@@ -76,7 +76,7 @@ public:
 	}
 
 	inline Mix_Music* LoadMusic(const std::string& path) {
-		CHECK_IF_IS_INITIALIZED_AND_RETURN(m_isInitialized, "SDL_mixer");
+		CHECK_IF_IS_INITIALIZED_AND_RETURN_X(m_isInitialized, "SDL_mixer", nullptr);
 
 		if(!Miscellaneous::FileExists(path)) {
 			Miscellaneous::PrintError("The music's path '" + path + "' is invalid!");
