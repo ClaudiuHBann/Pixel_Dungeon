@@ -95,6 +95,17 @@ public:
 		TTF_CloseFont(font);
 	}
 
+	inline TTF_Font* Get(const std::string& path) {
+		CHECK_IF_IS_INITIALIZED_AND_RETURN_X(m_isInitialized, "SDL_ttf", nullptr);
+
+		if(!Miscellaneous::FileExists(path)) {
+			Miscellaneous::PrintError("The font's path '" + path + "' is invalid!");
+			return nullptr;
+		}
+
+		return ((m_fonts.find(path) != m_fonts.end()) ? m_fonts[path] : nullptr);
+	}
+
 private:
 	static uint8_t m_objectCounter;
 	static bool m_isInitialized;

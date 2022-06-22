@@ -148,8 +148,10 @@
     <ClInclude Include="include\Core\Window.hpp" />
     <ClInclude Include="include\Utility\Miscellaneous.hpp" />
     <ClInclude Include="include\Utility\Random.hpp" />
+    <ClInclude Include="include\Core\Mixer.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\Core\Mixer.cpp" />
     <ClCompile Include="source\Core\Text.cpp" />
     <ClCompile Include="source\Core\Texture.cpp" />
     <ClCompile Include="source\Core\Window.cpp" />
