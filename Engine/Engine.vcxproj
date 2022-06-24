@@ -152,6 +152,7 @@
     <ClInclude Include="include\Core\Mixer.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\Networking\IClient.hpp" />
     <ClCompile Include="source\Networking\Client.cpp" />
     <ClCompile Include="source\Core\Mixer.cpp" />
     <ClCompile Include="source\Core\Text.cpp" />

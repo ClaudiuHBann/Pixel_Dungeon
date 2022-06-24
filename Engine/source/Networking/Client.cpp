@@ -1,9 +1,17 @@
 #include "Networking/Client.hpp"
 
-Client::Client() {
+ClientTCP::ClientTCP(asio::io_context& ios):
+	ios(ios),
+	socket(ios) {
 
 }
 
-Client::~Client() {
+ClientTCP::ClientTCP(asio::io_context& ios, const std::string& host, const uint16_t port):
+	ios(ios),
+	socket(ios) {
+	Set(host, port);
+}
+
+ClientTCP::~ClientTCP() {
 
 }
